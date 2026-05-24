@@ -8,8 +8,8 @@ LOCAL_SRC_FILES := \
     ../mod/main.cpp
 
 LOCAL_C_INCLUDES := \
-    $(LOCAL_PATH)/../include \
-    $(LOCAL_PATH)/../include/mod
+    $(LOCAL_PATH)/../include/mod \
+    $(LOCAL_PATH)/../include
 
 LOCAL_CPPFLAGS := \
     -std=c++17 \

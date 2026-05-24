@@ -12,7 +12,7 @@
 #include <android/log.h>
 #include <GLES2/gl2.h>
 
-#include "mod/amlmod.h"
+#include "amlmod.h"
 
 // ============================================================
 // MYMOD setup
