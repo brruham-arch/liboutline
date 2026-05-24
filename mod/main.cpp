@@ -1,7 +1,3 @@
-// libshadowfix — Shadow Fix for SA-MP Mobile
-// Fix: force enable shadow rendering
-// Author: brruham-arch
-
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
@@ -39,10 +35,27 @@ static int hook_UseAdvancedShadows(int level) {
     return 1;
 }
 
+// Baca base address dari /proc/self/maps
+static uintptr_t getLibBase(const char* libname) {
+    FILE* f = fopen("/proc/self/maps", "r");
+    if (!f) return 0;
+    char line[512];
+    uintptr_t base = 0;
+    while (fgets(line, sizeof(line), f)) {
+        if (strstr(line, libname) && strstr(line, "r-xp")) {
+            base = (uintptr_t)strtoul(line, nullptr, 16);
+            break;
+        }
+    }
+    fclose(f);
+    return base;
+}
+
 static void fixShadowGlobals(uintptr_t base) {
     uint8_t* bRender = (uint8_t*)(base + OFF_bRenderShadows);
     _logf("[SF] bRenderShadows before=%d", *bRender);
     *bRender = 1;
+    _logf("[SF] bRenderShadows after=%d", *bRender);
 
     float* maxDist = (float*)(base + OFF_MAX_DIST_PED_SHADOW);
     _logf("[SF] MAX_DIST before=%.2f", *maxDist);
@@ -66,13 +79,13 @@ ON_MOD_PRELOAD() {
 ON_MOD_LOAD() {
     _log("[SF] OnModLoad start");
 
-    void* hGTASA = dlopen("libGTASA.so", RTLD_NOW | RTLD_NOLOAD);
-    if (!hGTASA) {
-        _log("[SF] ERROR: libGTASA not found");
-        aml->ShowToast(false, "[ShadowFix] ERROR: libGTASA tidak ditemukan");
+    // Baca base dari /proc/self/maps — paling reliable
+    uintptr_t base = getLibBase("libGTASA.so");
+    if (!base) {
+        _log("[SF] ERROR: libGTASA base tidak ditemukan di maps");
+        aml->ShowToast(false, "[ShadowFix] ERROR: libGTASA not found");
         return;
     }
-    uintptr_t base = (uintptr_t)hGTASA;
     _logf("[SF] libGTASA base=0x%08X", (unsigned)base);
 
     fixShadowGlobals(base);
@@ -102,5 +115,5 @@ ON_MOD_LOAD() {
     }
 
     _log("[SF] OnModLoad DONE");
-    aml->ShowToast(false, "[ShadowFix] Shadow fix aktif!");
+    aml->ShowToast(false, "[ShadowFix] Aktif!");
 }
