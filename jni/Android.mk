@@ -2,7 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := outline
+LOCAL_MODULE    := shadowfix
 
 LOCAL_SRC_FILES := \
     ../mod/main.cpp
@@ -24,7 +24,7 @@ LOCAL_LDLIBS := \
     -llog \
     -lm \
     -ldl \
-    -lGLESv2
+    
 
 LOCAL_LDFLAGS := \
     -static-libstdc++ \

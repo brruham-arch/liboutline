@@ -29,13 +29,13 @@ jobs:
       - name: Verify
         run: |
           ls -lh libs/armeabi-v7a/
-          file libs/armeabi-v7a/liboutline.so
+          file libs/armeabi-v7a/libshadowfix.so
           $ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-nm \
-            -D libs/armeabi-v7a/liboutline.so | grep " T "
+            -D libs/armeabi-v7a/libshadowfix.so | grep " T "
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: liboutline-arm32
-          path: libs/armeabi-v7a/liboutline.so
+          name: libshadowfix-arm32
+          path: libs/armeabi-v7a/libshadowfix.so
           retention-days: 7
